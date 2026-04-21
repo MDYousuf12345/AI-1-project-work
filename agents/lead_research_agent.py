@@ -236,10 +236,10 @@ Return JSON only.
 if __name__ == "__main__":
 
     sample_input = """
-Delhi Public School Bangalore is a CBSE school with a large student population focusing on academic excellence and technology-enabled learning.
+Narayana School Hyderabad prepares students for competitive exams with structured curriculum.
 """
-    website = "https://dpsbangalore.edu.in"
 
+    website = "https://www.narayanaschools.in"
     result = run_lead_research(
 
         input_text=sample_input,
