@@ -8,13 +8,61 @@ name
 location
 size
 contacts
-pain_points (2 to 3 items)
-recommended_approach (1 paragraph)
+pain_points
+recommended_approach
+
+Pain points MUST be selected from the following list when relevant:
+
+Low student admissions
+High admission drop-off after inquiry
+Weak lead follow-up process
+Poor parent communication
+Too much manual administrative work
+No automation in daily operations
+Difficulty managing student data
+Data scattered across Excel, paper, and WhatsApp
+No centralized dashboard for operations
+Slow response to parent inquiries
+Outdated or weak website
+No online admission system
+Poor digital presence
+Low brand visibility in local market
+Inefficient fee collection process
+Poor complaint or query tracking
+Weak internal communication between staff
+Difficulty tracking staff performance
+Time-consuming report generation
+Poor student attendance tracking
+Poor academic performance tracking
+Difficulty monitoring transport operations
+Difficulty managing hostel operations
+Lack of personalized parent engagement
+No CRM for admission or outreach
+Missed follow-ups with prospective parents
+Inefficient document collection and verification
+Poor event or campaign management
+Weak data-driven decision making
+Lack of analytics and insights
+Difficulty scaling operations as student count grows
+High dependency on manual phone calls and messages
+Inconsistent communication tone across staff
+Poor enquiry-to-enrollment conversion
+Limited online payment or portal options
+Weak alumni or community engagement
+Difficulty handling multiple branches or campuses
+No mobile app or parent portal
+Low process transparency for parents
+Slow turnaround on approvals and requests
 
 Rules:
 
+Return only valid JSON
 Be realistic and professional
-If data missing write "Not available"
-Pain points must be relevant to educational institutions
-Recommended approach must match pain points
-Return output only in JSON format
+If data is missing write "Not available"
+pain_points must contain only 2 to 3 items
+Choose only most relevant pain points based on institution type
+Do not include all pain points
+recommended_approach must be one concise paragraph
+recommended_approach must directly address selected pain points
+Avoid generic statements
+Keep language simple and business-friendly
