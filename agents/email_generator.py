@@ -18,11 +18,16 @@ import time
 from google import genai
 
 # ── GEMINI CLIENT SETUP ─────────────────────────────────────
-# 👉 Make sure you set API key before running:
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+google_api_key=os.getenv("GOOGLE_API_KEY")
 os.environ["GOOGLE_API_KEY"] = "your_api_key_here"
 
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
-print("✅ Gemini client ready")
+print("Gemini client ready")
 
 # ── SYSTEM PROMPT ───────────────────────────────────────────
 SYSTEM_PROMPT = """
@@ -95,7 +100,7 @@ Return only JSON.
 
         parsed = json.loads(raw)
 
-        # ✅ VALIDATION
+        # VALIDATION
         if "subject" not in parsed or "body" not in parsed:
             raise ValueError("Missing subject/body")
 
@@ -155,12 +160,12 @@ print("\n===== FINAL OUTPUT =====")
 result = generate_email_with_retry(test)
 
 if result["success"]:
-    print("\n📨 SUBJECT:")
+    print("\n SUBJECT:")
     print(result["data"]["subject"])
 
-    print("\n📝 BODY:")
+    print("\n BODY:")
     print(result["data"]["body"])
 
-    print("\n📊 WORD COUNT:", len(result["data"]["body"].split()))
+    print("\n WORD COUNT:", len(result["data"]["body"].split()))
 else:
-    print("❌ ERROR:", result["error"])
+    print(" ERROR:", result["error"])
