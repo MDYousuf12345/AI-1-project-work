@@ -14,17 +14,27 @@ Extract:
 - location
 - size
 - contacts
-- pain_points
-- recommended_approach
+- pain_points (ONLY 2 to 3 items)
+- recommended_approach (one short paragraph)
 
 Rules:
-- Return only valid JSON
-- If information is missing, return "Not available"
-- pain_points must contain only 2 to 3 items
-- recommended_approach must be only one short paragraph
-- recommended_approach must directly address the pain points
-- Keep output practical, simple, and business-oriented
-- Avoid generic statements
+- Return ONLY valid JSON.
+- Do NOT include markdown, explanations, or extra text.
+- Follow the exact JSON structure strictly.
+- If any information is missing, return "Not available".
+- Do NOT leave any field empty or null.
+
+Pain Points Rules:
+- Must contain ONLY 2 to 3 items.
+- Must be specific and realistic for the institution.
+- Avoid generic statements like "improve system".
+- Use education-specific problems where applicable.
+
+Recommended Approach Rules:
+- Must be one short paragraph (4–5 lines max).
+- Must directly address the pain points.
+- Must be practical, solution-oriented, and business-focused.
+- Avoid generic or vague suggestions.
 
 Use these common education pain point themes when relevant:
 - low admissions
@@ -47,7 +57,7 @@ Use these common education pain point themes when relevant:
 - weak online visibility
 - limited digital transformation
 
-Return output only in this JSON format:
+Output format (STRICT — do not change structure):
 
 {
   "name": "",

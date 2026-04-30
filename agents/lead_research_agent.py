@@ -4,18 +4,34 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+from groq import Groq
 
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    google_api_key=os.getenv("GOOGLE_API_KEY"),
-    temperature=0.3,
-    response_mime_type="application/json"
-)
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+GROQ_MODEL = "llama-3.1-8b-instant"
 AI2_API_BASE = os.getenv("AI2_API_BASE", "http://localhost:8001")
+
+
+def call_groq_json(prompt):
+    response = client.chat.completions.create(
+        model=GROQ_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": "You return only valid JSON. No markdown. No explanation."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.3,
+        response_format={"type": "json_object"}
+    )
+
+    return json.loads(response.choices[0].message.content)
 
 
 def load_prompt():
@@ -39,17 +55,9 @@ def get_lead_from_ai2(lead_id):
         print(f"\nAI-2 STATUS CODE:\n{r.status_code}")
 
         if r.status_code == 200:
-            try:
-                data = r.json()
-                return data
-            except Exception:
-                print("\nAI-2 RESPONSE IS NOT VALID JSON")
-                return {}
+            return r.json()
 
-        try:
-            print("\nAI-2 RAW RESPONSE:\n", r.text[:500])
-        except Exception:
-            pass
+        print("\nAI-2 RAW RESPONSE:\n", r.text[:500])
 
     except Exception as e:
         print(f"\nAI-2 REQUEST FAILED:\n{str(e)}")
@@ -149,9 +157,9 @@ def get_fallback_output(input_text, ai2_data=None):
         "size": "Not available",
         "contacts": "Not available",
         "pain_points": [
-            "Not available",
-            "Not available",
-            "Not available"
+            "AI insights temporarily unavailable",
+            "Institution-specific analysis is pending",
+            "Full research output will be available once API access resumes"
         ],
         "recommended_approach": "Not available"
     }
@@ -190,15 +198,7 @@ Return JSON only.
 
     for attempt in range(retries + 1):
         try:
-            response = llm.invoke(final_prompt)
-            raw_output = response.content.strip()
-
-            if raw_output.startswith("```json"):
-                raw_output = raw_output.replace("```json", "").replace("```", "").strip()
-            elif raw_output.startswith("```"):
-                raw_output = raw_output.replace("```", "").strip()
-
-            parsed_output = json.loads(raw_output)
+            parsed_output = call_groq_json(final_prompt)
 
             return {
                 "success": True,
@@ -209,14 +209,7 @@ Return JSON only.
         except Exception as e:
             error_message = str(e)
 
-            if "API_KEY_INVALID" in error_message or "API key expired" in error_message:
-                return {
-                    "success": False,
-                    "data": {},
-                    "error": "API key expired or invalid"
-                }
-
-            if "503" in error_message or "UNAVAILABLE" in error_message:
+            if "429" in error_message or "rate_limit" in error_message.lower():
                 if attempt < retries:
                     time.sleep(20)
                     continue
@@ -224,18 +217,7 @@ Return JSON only.
                 return {
                     "success": True,
                     "data": get_fallback_output(input_text, ai2_data),
-                    "error": "Gemini service temporarily unavailable"
-                }
-
-            if "429" in error_message or "RESOURCE_EXHAUSTED" in error_message:
-                if attempt < retries:
-                    time.sleep(20)
-                    continue
-
-                return {
-                    "success": True,
-                    "data": get_fallback_output(input_text, ai2_data),
-                    "error": "Gemini quota exhausted"
+                    "error": "Groq rate limit reached"
                 }
 
             return {
@@ -246,7 +228,7 @@ Return JSON only.
 
 
 if __name__ == "__main__":
-    TEST_MODE = "api"
+    TEST_MODE = "manual"
 
     if TEST_MODE == "manual":
         sample_input = """
@@ -260,7 +242,6 @@ Delhi Public School Bangalore is a CBSE school in Bangalore with a large student
         )
 
     elif TEST_MODE == "api":
-        print("\n--- TESTING AI-2 INTEGRATION ---\n")
         result = run_lead_research(lead_id=1)
 
     print("\n--- FINAL OUTPUT ---\n")
