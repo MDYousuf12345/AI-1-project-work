@@ -15,7 +15,7 @@ import os
 load_dotenv()
 
 google_api_key=os.getenv("GOOGLE_API_KEY")
-os.environ["GOOGLE_API_KEY"] = "your_api_key_here"
+
 
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 print("Gemini client ready")

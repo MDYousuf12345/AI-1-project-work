@@ -1,4 +1,4 @@
-langchain
-langchain-google-genai
+groq
 python-dotenv
+requests
 beautifulsoup4
